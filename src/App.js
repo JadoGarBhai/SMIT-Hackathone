@@ -1,5 +1,4 @@
 import Routing from "./Routing/Routing";
-import AuthContextProvider from "./Context/AuthContext";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import "./Configure/global";
@@ -7,9 +6,7 @@ import "./Configure/global";
 function App() {
   return (
     <>
-      <AuthContextProvider>
-        <Routing />
-      </AuthContextProvider>
+      <Routing />
 
       <ToastContainer
         position="top-right"
