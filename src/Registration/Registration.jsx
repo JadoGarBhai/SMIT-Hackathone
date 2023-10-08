@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { firestore } from "../../Configure/firebase";
-import { doc, setDoc } from "firebase/firestore";
-
+import { firestore } from "../Configure/firebase";
+import { collection, addDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import "./Registration.css";
 
@@ -32,7 +31,33 @@ const Registration = () => {
     e.preventDefault();
 
     try {
-      window.toastify("User logged in successfuly!!", "success");
+      // Upload the picture to Firebase Storage first (if a picture is selected)
+      let pictureURL = null;
+      if (state.picture) {
+        const pictureRef = ref(
+          storageRef,
+          state.email + "_" + state.picture.name
+        );
+        await uploadBytes(pictureRef, state.picture);
+        pictureURL = await getDownloadURL(pictureRef);
+      }
+
+      // Create a new document in Firestore with a unique ID
+      await addDoc(collection(firestore, "Students"), {
+        email: state.email,
+        password: state.password,
+        city: state.city,
+        courses: state.courses,
+        fullName: state.fullName,
+        fatherName: state.fatherName,
+        cnic: state.cnic,
+        dob: state.dob,
+        address: state.address,
+        pictureURL: pictureURL, // Store the download URL of the uploaded picture
+      });
+
+      window.toastify("User Stored Successfully !!", "success");
+
       // Reset the form state
       setState(initialState);
     } catch (error) {
@@ -50,7 +75,7 @@ const Registration = () => {
               src="https://forms.saylaniwelfare.com/static/media/logo.22bf709605809177256c.png"
               alt=""
             />
-            <h1>Course Registration Form</h1>
+            <h1>Add Students</h1>
           </div>
         </div>
       </header>
@@ -139,6 +164,7 @@ const Registration = () => {
                 required
                 value={state.fullName}
                 name="fullName"
+                onChange={changeHandler}
               />
             </div>
 
@@ -153,6 +179,7 @@ const Registration = () => {
                 required
                 value={state.fatherName}
                 name="fatherName"
+                onChange={changeHandler}
               />
             </div>
 
@@ -167,6 +194,7 @@ const Registration = () => {
                 name="cnic"
                 value={state.cnic}
                 required
+                onChange={changeHandler}
               />
             </div>
 
@@ -181,6 +209,7 @@ const Registration = () => {
                 name="dob"
                 value={state.dob}
                 required
+                onChange={changeHandler}
               />
             </div>
 
@@ -195,6 +224,7 @@ const Registration = () => {
                 name="address"
                 value={state.address}
                 required
+                onChange={changeHandler}
               />
             </div>
 
@@ -220,7 +250,7 @@ const Registration = () => {
                 className="btn btn-primary col-12 my-5 py-2"
                 onClick={submitHandler}
               >
-                Sign Up
+                Add
               </button>
             </div>
           </form>
