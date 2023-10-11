@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { firestore } from "../Configure/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import "./Registration.css";
+import "./Add.css";
+import { useNavigate } from "react-router-dom";
 
 const initialState = {
   email: "",
@@ -17,11 +18,23 @@ const initialState = {
   picture: null,
 };
 
-const Registration = () => {
+const Add = () => {
   const [state, setState] = useState(initialState);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const storage = getStorage(); // Firebase storage reference
   const storageRef = ref(storage, "user-profiles");
+
+  function randomId() {
+    const min = 0;
+    const max = 9999;
+    const randomID = Math.floor(Math.random() * (max - min + 1)) + min;
+    return String(randomID).padStart(4, "0");
+  }
+
+  const uniqueId = randomId();
+
+  const navigate = useNavigate("/students");
 
   const changeHandler = (e) => {
     setState({ ...state, [e.target.name]: e.target.value });
@@ -29,21 +42,19 @@ const Registration = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    setIsProcessing(true);
 
     try {
-      // Upload the picture to Firebase Storage first (if a picture is selected)
       let pictureURL = null;
       if (state.picture) {
-        const pictureRef = ref(
-          storageRef,
-          state.email + "_" + state.picture.name
-        );
+        const pictureRef = ref(storageRef, uniqueId);
         await uploadBytes(pictureRef, state.picture);
         pictureURL = await getDownloadURL(pictureRef);
       }
 
       // Create a new document in Firestore with a unique ID
-      await addDoc(collection(firestore, "Students"), {
+      await setDoc(doc(firestore, "students", uniqueId), {
+        studentId: uniqueId,
         email: state.email,
         password: state.password,
         city: state.city,
@@ -53,15 +64,15 @@ const Registration = () => {
         cnic: state.cnic,
         dob: state.dob,
         address: state.address,
-        pictureURL: pictureURL, // Store the download URL of the uploaded picture
+        pictureURL: pictureURL,
       });
 
       window.toastify("User Stored Successfully !!", "success");
 
-      // Reset the form state
       setState(initialState);
+      navigate("/students");
     } catch (error) {
-      console.log(error.message);
+      setIsProcessing(false);
       window.toastify(error.message, "error");
     }
   };
@@ -233,6 +244,7 @@ const Registration = () => {
                 Upload Picture
               </label>
               <input
+                required
                 type="file"
                 className="form-control"
                 placeholder="Picture"
@@ -240,7 +252,6 @@ const Registration = () => {
                 onChange={(e) =>
                   setState({ ...state, picture: e.target.files[0] })
                 }
-                required
               />
             </div>
 
@@ -248,9 +259,14 @@ const Registration = () => {
               <button
                 type="submit"
                 className="btn btn-primary col-12 my-5 py-2"
+                disabled={isProcessing}
                 onClick={submitHandler}
               >
-                Add
+                {!isProcessing ? (
+                  <span>Add</span>
+                ) : (
+                  <div className="spinner spinner-grow spinner-grow-sm"></div>
+                )}
               </button>
             </div>
           </form>
@@ -260,4 +276,4 @@ const Registration = () => {
   );
 };
 
-export default Registration;
+export default Add;
