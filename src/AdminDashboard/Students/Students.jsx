@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { collection, doc, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs, deleteDoc } from "firebase/firestore";
 import { firestore } from "../../Configure/firebase";
 import { Link } from "react-router-dom";
 import SideBar from "../../Components/Sidebar/SideBar";
 
 const Students = () => {
   const [documents, setDocuments] = useState([]);
-  const [stu, setStu] = useState({});
 
   const readData = async () => {
     let array = [];
@@ -20,6 +19,20 @@ const Students = () => {
   useEffect(() => {
     readData();
   }, []);
+
+  const deleteHandle = async (studentId) => {
+    try {
+      await deleteDoc(doc(firestore, "students", studentId));
+
+      let newDocument = documents.filter((doc) => {
+        return doc.id !== studentId;
+      });
+
+      setDocuments(newDocument);
+    } catch (error) {
+      console.error("Error deleting document:", error);
+    }
+  };
 
   return (
     <div className="d-flex">
@@ -50,17 +63,18 @@ const Students = () => {
                       <table className="table table-light table-striped">
                         <thead>
                           <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Actions</th>
+                            <th scope="col">Sr. No</th>
+                            <th scope="col">Full Name</th>
+                            <th scope="col">CNIC</th>
+                            <th scope="col">City</th>
+                            <th scope="col">Course</th>
+                            <th scope="col">Action</th>
                           </tr>
                         </thead>
                         <tbody>
                           {documents.map((stu, i) => {
                             return (
-                              <tr key={i}>
+                              <tr key={stu.studentId}>
                                 <th scope="row">{i + 1}</th>
                                 <td>{stu.fullName}</td>
                                 <td>{stu.cnic}</td>
@@ -71,17 +85,13 @@ const Students = () => {
                                     className="btn btn-sm btn-info me-2"
                                     data-bs-toggle="modal"
                                     data-bs-target="#editModal"
-                                    onClick={() => {
-                                      setStu(stu);
-                                    }}
                                   >
                                     Update
                                   </button>
+
                                   <button
                                     className="btn btn-sm btn-danger"
-                                    onClick={() => {
-                                      deleteHandle(doc);
-                                    }}
+                                    onClick={() => deleteHandle(stu.studentId)}
                                   >
                                     Delete
                                   </button>
