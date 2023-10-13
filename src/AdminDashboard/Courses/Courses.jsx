@@ -6,6 +6,7 @@ import {
   collection,
   getDocs,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import SideBar from "../../Components/Sidebar/SideBar";
 
@@ -19,6 +20,7 @@ const Courses = () => {
   const [state, setState] = useState(initialState);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   // const [courseForEdit, setCourseForEdit] = useState({});
 
   const changeHandler = (e) => {
@@ -67,6 +69,33 @@ const Courses = () => {
   useEffect(() => {
     readData();
   }, []);
+
+  const editHandle = (cor) => {
+    setState(cor);
+  };
+
+  const handleUpdate = async (cor) => {
+    setIsUpdating(true);
+    let newCourses = documents.map((oldCourse) => {
+      if (oldCourse.courseId === cor.courseId) {
+        return cor;
+      } else {
+        return oldCourse;
+      }
+    });
+    try {
+      await updateDoc(doc(firestore, "courses", cor.courseId), {
+        courseName: state.courseName,
+        batchNo: state.batchNo,
+      });
+      window.toastify(`Document updated.`, "success");
+      setDocuments(newCourses);
+    } catch (e) {
+      window.toastify(`Error adding document: ${e.message}`, "error");
+    }
+    setIsUpdating(false);
+    setState({});
+  };
 
   const deleteHandle = async (cor) => {
     setIsDeleting(true);
@@ -218,13 +247,14 @@ const Courses = () => {
                                     class="btn btn-sm btn-primary me-1"
                                     data-bs-toggle="modal"
                                     data-bs-target="#staticBackdrop"
-                                    // onClick={() => editHandle(cor)}
+                                    onClick={() => editHandle(cor)}
                                   >
                                     Update
                                   </button>
 
                                   <button
                                     className="btn btn-sm btn-danger"
+                                    disabled={isDeleting}
                                     onClick={() => deleteHandle(cor)}
                                   >
                                     {!isDeleting ? (
@@ -265,7 +295,7 @@ const Courses = () => {
             <div class="modal-content">
               <div class="modal-header">
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">
-                  `Update ${state.courseName}-${state.batchNo}`
+                  Update {state.courseName}-{state.batchNo}
                 </h1>
                 <button
                   type="button"
@@ -274,7 +304,37 @@ const Courses = () => {
                   aria-label="Close"
                 ></button>
               </div>
-              <div class="modal-body">...</div>
+              <div class="modal-body">
+                <div className="col-12">
+                  <label for="inputAddress" className="form-label">
+                    Course Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Course Name"
+                    required
+                    value={state.courseName}
+                    name="courseName"
+                    onChange={changeHandler}
+                  />
+                </div>
+
+                <div className="col-12">
+                  <label for="inputAddress" className="form-label">
+                    Batch No
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Batch No"
+                    name="batchNo"
+                    value={state.batchNo}
+                    required
+                    onChange={changeHandler}
+                  />
+                </div>
+              </div>
               <div class="modal-footer">
                 <button
                   type="button"
@@ -283,8 +343,16 @@ const Courses = () => {
                 >
                   Close
                 </button>
-                <button type="button" class="btn btn-primary">
-                  Update
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  onClick={() => handleUpdate(state)}
+                >
+                  {!isUpdating ? (
+                    <span>Save Changes</span>
+                  ) : (
+                    <div className="spinner spinner-grow spinner-grow-sm"></div>
+                  )}
                 </button>
               </div>
             </div>
