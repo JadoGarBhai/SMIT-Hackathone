@@ -113,6 +113,7 @@ const Add = () => {
                 <option>Islamabad</option>
               </select>
             </div>
+
             <div className="col-md-6">
               <label for="inputState" className="form-label">
                 Courses
@@ -148,6 +149,7 @@ const Add = () => {
                 value={state.email}
               />
             </div>
+
             <div className="col-md-6">
               <label for="inputPassword4" className="form-label">
                 Password
