@@ -103,7 +103,7 @@ const Students = () => {
             <div className="container">
               <div className="row">
                 <div className="col">
-                  <h1 className="text-white text-center">Students</h1>
+                  <h1 className=" text-center">Students</h1>
                   <hr />
                   {documents.length > 0 ? (
                     <div className="table-responsive">

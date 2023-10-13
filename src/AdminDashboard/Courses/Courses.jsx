@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { firestore } from "../../Configure/firebase";
-import { doc, setDoc, collection, getDocs } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  collection,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
 import SideBar from "../../Components/Sidebar/SideBar";
 
 const initialState = {
@@ -12,6 +18,8 @@ const Courses = () => {
   const [documents, setDocuments] = useState([]);
   const [state, setState] = useState(initialState);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  // const [courseForEdit, setCourseForEdit] = useState({});
 
   const changeHandler = (e) => {
     setState({ ...state, [e.target.name]: e.target.value });
@@ -59,6 +67,21 @@ const Courses = () => {
   useEffect(() => {
     readData();
   }, []);
+
+  const deleteHandle = async (cor) => {
+    setIsDeleting(true);
+    let newCourses = documents.filter((newCourse) => {
+      return cor.courseId !== newCourse.courseId;
+    });
+    try {
+      await deleteDoc(doc(firestore, "courses", cor.courseId));
+      window.toastify("User Deleted Successfully !!", "success");
+      setDocuments(newCourses);
+    } catch (error) {
+      window.toastify(error.message, "error");
+    }
+    setIsDeleting(false);
+  };
 
   return (
     <div className="d-flex">
@@ -167,7 +190,7 @@ const Courses = () => {
             <div className="container">
               <div className="row">
                 <div className="col">
-                  <h1 className="text-white text-center">Courses</h1>
+                  <h1 className="text-center">Courses</h1>
                   <hr />
                   {documents.length > 0 ? (
                     <div className="table-responsive">
@@ -195,17 +218,20 @@ const Courses = () => {
                                     class="btn btn-sm btn-primary me-1"
                                     data-bs-toggle="modal"
                                     data-bs-target="#staticBackdrop"
+                                    // onClick={() => editHandle(cor)}
                                   >
                                     Update
                                   </button>
 
                                   <button
                                     className="btn btn-sm btn-danger"
-                                    // onClick={() =>
-                                    //   deleteHandle(stu.studentId)
-                                    // }
+                                    onClick={() => deleteHandle(cor)}
                                   >
-                                    Delete
+                                    {!isDeleting ? (
+                                      <span>Delete</span>
+                                    ) : (
+                                      <div className="spinner spinner-grow spinner-grow-sm"></div>
+                                    )}
                                   </button>
                                 </td>
                               </tr>
