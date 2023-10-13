@@ -21,10 +21,13 @@ const Courses = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  // const [courseForEdit, setCourseForEdit] = useState({});
+  const [courseForEdit, setCourseForEdit] = useState({});
 
   const changeHandler = (e) => {
     setState({ ...state, [e.target.name]: e.target.value });
+  };
+  const handleChange = (e) => {
+    setCourseForEdit({ ...courseForEdit, [e.target.name]: e.target.value });
   };
 
   function randomId() {
@@ -71,7 +74,7 @@ const Courses = () => {
   }, []);
 
   const editHandle = (cor) => {
-    setState(cor);
+    setCourseForEdit(cor);
   };
 
   const handleUpdate = async (cor) => {
@@ -85,8 +88,8 @@ const Courses = () => {
     });
     try {
       await updateDoc(doc(firestore, "courses", cor.courseId), {
-        courseName: state.courseName,
-        batchNo: state.batchNo,
+        courseName: courseForEdit.courseName,
+        batchNo: courseForEdit.batchNo,
       });
       window.toastify(`Document updated.`, "success");
       setDocuments(newCourses);
@@ -94,7 +97,7 @@ const Courses = () => {
       window.toastify(`Error adding document: ${e.message}`, "error");
     }
     setIsUpdating(false);
-    setState({});
+    setCourseForEdit({});
   };
 
   const deleteHandle = async (cor) => {
@@ -295,7 +298,7 @@ const Courses = () => {
             <div class="modal-content">
               <div class="modal-header">
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">
-                  Update {state.courseName}-{state.batchNo}
+                  Update Course
                 </h1>
                 <button
                   type="button"
@@ -314,9 +317,9 @@ const Courses = () => {
                     className="form-control"
                     placeholder="Course Name"
                     required
-                    value={state.courseName}
+                    value={courseForEdit.courseName}
                     name="courseName"
-                    onChange={changeHandler}
+                    onChange={handleChange}
                   />
                 </div>
 
@@ -329,9 +332,9 @@ const Courses = () => {
                     className="form-control"
                     placeholder="Batch No"
                     name="batchNo"
-                    value={state.batchNo}
+                    value={courseForEdit.batchNo}
                     required
-                    onChange={changeHandler}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
@@ -346,7 +349,7 @@ const Courses = () => {
                 <button
                   type="button"
                   class="btn btn-primary"
-                  onClick={() => handleUpdate(state)}
+                  onClick={() => handleUpdate(courseForEdit)}
                 >
                   {!isUpdating ? (
                     <span>Save Changes</span>
