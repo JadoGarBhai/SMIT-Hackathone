@@ -16,23 +16,22 @@ const Students = () => {
     setDocuments(array);
   };
 
-  useEffect(() => {
-    readData();
-  }, []);
-
-  const deleteHandle = async (studentId) => {
+  const deleteHandle = async (studentId, i) => {
     try {
       await deleteDoc(doc(firestore, "students", studentId));
-
-      let newDocument = documents.filter((doc) => {
-        return doc.id !== studentId;
-      });
-
-      setDocuments(newDocument);
     } catch (error) {
       console.error("Error deleting document:", error);
     }
+    let newDocument = documents.filter((doc) => {
+      return doc.id !== i;
+    });
+
+    setDocuments(newDocument);
   };
+
+  useEffect(() => {
+    readData();
+  }, []);
 
   return (
     <div className="d-flex">
@@ -43,7 +42,7 @@ const Students = () => {
           <h1 className=".text-gradient">Students</h1>
           <div
             className="btn btn-secondary"
-            style={{ height: "45px", marginTop: "4px" }}
+            style={{ height: "55px", paddingTop: "11px" }}
           >
             <Link to={"/add"} style={{ textDecoration: "none", color: "#fff" }}>
               Add Students
@@ -91,7 +90,9 @@ const Students = () => {
 
                                   <button
                                     className="btn btn-sm btn-danger"
-                                    onClick={() => deleteHandle(stu.studentId)}
+                                    onClick={() =>
+                                      deleteHandle(stu.studentId, i)
+                                    }
                                   >
                                     Delete
                                   </button>

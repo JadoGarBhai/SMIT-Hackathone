@@ -72,9 +72,9 @@ const Add = () => {
       setState(initialState);
       navigate("/students");
     } catch (error) {
-      setIsProcessing(false);
       window.toastify(error.message, "error");
     }
+    setIsProcessing(false);
   };
 
   return (
