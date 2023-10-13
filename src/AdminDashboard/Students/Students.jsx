@@ -6,6 +6,7 @@ import SideBar from "../../Components/Sidebar/SideBar";
 
 const Students = () => {
   const [documents, setDocuments] = useState([]);
+  const [studentForEdit, setStudentForEdit] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
 
   const readData = async () => {
@@ -17,17 +18,19 @@ const Students = () => {
     setDocuments(array);
   };
 
-  const deleteHandle = async (studentId) => {
-    try {
-      await deleteDoc(doc(firestore, "students", studentId));
-    } catch (error) {
-      console.error("Error deleting document:", error);
-    }
-    let newDocument = documents.filter((doc) => {
-      return doc.id !== studentId;
+  const deleteHandle = async (stu) => {
+    setIsProcessing(true);
+    let newDocuments = documents.filter((newStudent) => {
+      return stu.studentId !== newStudent.studentId;
     });
-
-    setDocuments(newDocument);
+    try {
+      await deleteDoc(doc(firestore, "students", stu.studentId));
+      window.toastify("User Deleted Successfully !!", "success");
+      setDocuments(newDocuments);
+    } catch (error) {
+      window.toastify(error.message, "error");
+    }
+    setIsProcessing(false);
   };
 
   useEffect(() => {
@@ -74,7 +77,7 @@ const Students = () => {
                         <tbody>
                           {documents.map((stu, i) => {
                             return (
-                              <tr key={stu.studentId}>
+                              <tr key={i}>
                                 <th scope="row">{i + 1}</th>
                                 <td>{stu.fullName}</td>
                                 <td>{stu.cnic}</td>
@@ -92,7 +95,7 @@ const Students = () => {
                                   <button
                                     className="btn btn-sm btn-danger"
                                     disabled={isProcessing}
-                                    onClick={() => deleteHandle(stu.studentId)}
+                                    onClick={() => deleteHandle(stu)}
                                   >
                                     {!isProcessing ? (
                                       <span>Delete</span>

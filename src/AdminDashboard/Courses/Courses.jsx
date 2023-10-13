@@ -171,9 +171,9 @@ const Courses = () => {
                   <hr />
                   {documents.length > 0 ? (
                     <div className="table-responsive">
-                      <table className="table table-light table-striped">
+                      <table className="table">
                         <thead>
-                          <tr>
+                          <tr class="table-secondary">
                             <th scope="col">Sr. No</th>
                             <th scope="col">Course ID</th>
                             <th scope="col">Course Name</th>
@@ -191,9 +191,10 @@ const Courses = () => {
                                 <td>{cor.batchNo}</td>
                                 <td>
                                   <button
-                                    className="btn btn-sm btn-info me-2"
+                                    type="button"
+                                    class="btn btn-sm btn-primary me-1"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#editModal"
+                                    data-bs-target="#staticBackdrop"
                                   >
                                     Update
                                   </button>
@@ -219,6 +220,46 @@ const Courses = () => {
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* UPDATE MODEL. */}
+        <div
+          class="modal fade"
+          id="staticBackdrop"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabindex="-1"
+          aria-labelledby="staticBackdropLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                  `Update ${state.courseName}-${state.batchNo}`
+                </h1>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">...</div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="button" class="btn btn-primary">
+                  Update
+                </button>
               </div>
             </div>
           </div>
