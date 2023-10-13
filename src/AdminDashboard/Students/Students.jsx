@@ -6,6 +6,7 @@ import SideBar from "../../Components/Sidebar/SideBar";
 
 const Students = () => {
   const [documents, setDocuments] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const readData = async () => {
     let array = [];
@@ -16,14 +17,14 @@ const Students = () => {
     setDocuments(array);
   };
 
-  const deleteHandle = async (studentId, i) => {
+  const deleteHandle = async (studentId) => {
     try {
       await deleteDoc(doc(firestore, "students", studentId));
     } catch (error) {
       console.error("Error deleting document:", error);
     }
     let newDocument = documents.filter((doc) => {
-      return doc.id !== i;
+      return doc.id !== studentId;
     });
 
     setDocuments(newDocument);
@@ -90,11 +91,14 @@ const Students = () => {
 
                                   <button
                                     className="btn btn-sm btn-danger"
-                                    onClick={() =>
-                                      deleteHandle(stu.studentId, i)
-                                    }
+                                    disabled={isProcessing}
+                                    onClick={() => deleteHandle(stu.studentId)}
                                   >
-                                    Delete
+                                    {!isProcessing ? (
+                                      <span>Delete</span>
+                                    ) : (
+                                      <div className="spinner spinner-grow spinner-grow-sm"></div>
+                                    )}
                                   </button>
                                 </td>
                               </tr>
@@ -105,7 +109,7 @@ const Students = () => {
                     </div>
                   ) : (
                     <div className="text-center">
-                      <div className="spinner-border text-white"></div>
+                      <div className="spinner-border"></div>
                     </div>
                   )}
                 </div>
