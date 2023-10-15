@@ -53,6 +53,13 @@ const Courses = () => {
 
       window.toastify("Course Stored Successfully !!", "success");
 
+      const querySnapshot = await getDocs(collection(firestore, "courses"));
+      let updatedData = [];
+      querySnapshot.forEach((doc) => {
+        updatedData.push(doc.data());
+      });
+      setDocuments(updatedData);
+
       setState(initialState);
     } catch (error) {
       window.toastify(error.message, "error");
