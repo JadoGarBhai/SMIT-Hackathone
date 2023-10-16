@@ -1,16 +1,33 @@
 import React, { useState, useEffect } from "react";
 import SideBar from "../../Components/Sidebar/SideBar";
 import { firestore } from "../../Configure/firebase";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, doc, setDoc } from "firebase/firestore";
 
 const Attendence = () => {
   const [documents, setDocuments] = useState([]);
+  const [submittedAttendance, setSubmittedAttendance] = useState([]);
 
+  const changeHandler = (e, studentId) => {
+    setDocuments((prevDocuments) => {
+      return prevDocuments.map((student) => {
+        if (student.studentId === studentId) {
+          return { ...student, attendance: e.target.value };
+        }
+        return student;
+      });
+    });
+  };
+
+  // DATA GET FROM STUDENT SECTION.
   const readData = async () => {
     let array = [];
     const querySnapshot = await getDocs(collection(firestore, "students"));
     querySnapshot.forEach((doc) => {
-      array.push(doc.data());
+      array.push({ ...doc.data(), attendance: "Present" });
+      setSubmittedAttendance((prevSubmittedAttendance) => [
+        ...prevSubmittedAttendance,
+        false,
+      ]);
     });
     setDocuments(array);
   };
@@ -18,6 +35,28 @@ const Attendence = () => {
   useEffect(() => {
     readData();
   }, []);
+
+  // ATTENDENCE DATA UPLOADED.
+  const submitHandler = async (stu, index) => {
+    // Check if the attendance value is defined, and only then proceed
+    if (stu.attendance !== undefined) {
+      await setDoc(doc(firestore, "attendance", stu.studentId), {
+        attendance: stu.attendance,
+      });
+
+      // Update the submittedAttendance state for the specific student
+      setSubmittedAttendance((prevSubmittedAttendance) => {
+        const newSubmittedAttendance = [...prevSubmittedAttendance];
+        newSubmittedAttendance[index] = true;
+        return newSubmittedAttendance;
+      });
+
+      console.log("Done !!");
+    } else {
+      console.error("Invalid attendance value for student", stu.studentId);
+    }
+  };
+
   return (
     <div className="d-flex">
       <SideBar />
@@ -61,17 +100,25 @@ const Attendence = () => {
                                 <td>
                                   <select
                                     className="form-select px-1"
-                                    name="attandence"
+                                    name="attendance"
                                     required
-                                    // value={state.courses}
-                                    // onChange={changeHandler}
+                                    value={stu.attendance}
+                                    onChange={(e) =>
+                                      changeHandler(e, stu.studentId)
+                                    }
+                                    disabled={submittedAttendance[i]}
                                   >
-                                    <option>Present</option>
-                                    <option>Absent</option>
+                                    <option value="Present">Present</option>
+                                    <option value="Absent">Absent</option>
                                   </select>
                                 </td>
                                 <td>
-                                  <div className="btn btn-info me-1">
+                                  <div
+                                    className="btn btn-info me-1"
+                                    onClick={() => {
+                                      submitHandler(stu, i);
+                                    }}
+                                  >
                                     Submit
                                   </div>
                                   <div className="btn btn-success">Update</div>
