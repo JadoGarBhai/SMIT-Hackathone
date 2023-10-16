@@ -83,6 +83,7 @@ const Attendence = () => {
                             <th scope="col">Student ID</th>
                             <th scope="col">Course and Batch</th>
                             <th scope="col">Attendence</th>
+                            <th scope="col">Attendenced</th>
                             <th scope="col">Action</th>
                           </tr>
                         </thead>
@@ -112,6 +113,9 @@ const Attendence = () => {
                                     <option value="Absent">Absent</option>
                                   </select>
                                 </td>
+
+                                <td></td>
+
                                 <td>
                                   <div
                                     className="btn btn-info me-1"
@@ -121,7 +125,6 @@ const Attendence = () => {
                                   >
                                     Submit
                                   </div>
-                                  <div className="btn btn-success">Update</div>
                                 </td>
                               </tr>
                             );
