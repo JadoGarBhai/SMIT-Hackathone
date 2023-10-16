@@ -112,8 +112,7 @@ const Students = () => {
                           <tr>
                             <th scope="col">Sr. No</th>
                             <th scope="col">Full Name</th>
-                            <th scope="col">CNIC</th>
-                            <th scope="col">City</th>
+                            <th scope="col">Student ID</th>
                             <th scope="col">Course</th>
                             <th scope="col">Action</th>
                           </tr>
@@ -124,9 +123,10 @@ const Students = () => {
                               <tr key={i}>
                                 <th scope="row">{i + 1}</th>
                                 <td>{stu.fullName}</td>
-                                <td>{stu.cnic}</td>
-                                <td>{stu.city}</td>
-                                <td>{stu.courses}</td>
+                                <td>{stu.studentId}</td>
+                                <td>
+                                  {stu.courses}-{stu.batch}
+                                </td>
                                 <td>
                                   <button
                                     type="button"
