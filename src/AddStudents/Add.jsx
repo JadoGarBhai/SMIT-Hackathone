@@ -13,6 +13,7 @@ const initialState = {
   fullName: "",
   fatherName: "",
   cnic: "",
+  batch: "",
   dob: "",
   address: "",
   picture: null,
@@ -59,6 +60,7 @@ const Add = () => {
         password: state.password,
         city: state.city,
         courses: state.courses,
+        batch: state.batch,
         fullName: state.fullName,
         fatherName: state.fatherName,
         cnic: state.cnic,
@@ -114,7 +116,7 @@ const Add = () => {
               </select>
             </div>
 
-            <div className="col-md-6">
+            <div className="col-md-3">
               <label for="inputState" className="form-label">
                 Courses
               </label>
@@ -132,6 +134,19 @@ const Add = () => {
                 <option>CCNA</option>
                 <option>Web & Mobile Application</option>
               </select>
+            </div>
+
+            <div className="col-3">
+              <label className="form-label">Batch No</label>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Batch No"
+                name="batch"
+                value={state.batch}
+                required
+                onChange={changeHandler}
+              />
             </div>
 
             <div className="col-md-6">
@@ -197,9 +212,7 @@ const Add = () => {
             </div>
 
             <div className="col-6">
-              <label for="inputAddress" className="form-label">
-                CNIC No
-              </label>
+              <label className="form-label">CNIC No</label>
               <input
                 type="number"
                 className="form-control"
