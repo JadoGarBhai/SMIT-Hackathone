@@ -1,13 +1,13 @@
-import Routing from "./Routing/Routing";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import "../node_modules/bootstrap/dist/js/bootstrap.bundle";
+import Routes from "./Routes";
 import "./Configure/global";
-import SideBar from "./Components/Sidebar/SideBar";
 
 function App() {
   return (
     <>
-      <Routing />
+      <Routes />
       {/* <SideBar /> */}
 
       <ToastContainer
