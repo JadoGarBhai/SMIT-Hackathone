@@ -3,12 +3,13 @@ import { ToastContainer } from "react-toastify";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle";
 import Routes from "./Routes";
 import "./Configure/global";
+import Sidebar from "./components/Sidebar/Sidebar";
 
 function App() {
   return (
     <>
       <Routes />
-      {/* <SideBar /> */}
+      <Sidebar />
 
       <ToastContainer
         position="top-right"
