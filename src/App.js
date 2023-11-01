@@ -1,15 +1,16 @@
 import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
 import { ToastContainer } from "react-toastify";
 import "../node_modules/bootstrap/dist/js/bootstrap.bundle";
-import Routes from "./Routes";
 import "./Configure/global";
-import Sidebar from "./components/Sidebar/Sidebar";
+import Routing from "./Routing";
+// import Navbar from "./components/Sidebar/Navbar";
 
 function App() {
   return (
     <>
-      <Routes />
-      <Sidebar />
+      <Routing />
+      {/* <Navbar /> */}
 
       <ToastContainer
         position="top-right"
